@@ -14,7 +14,10 @@ export async function GET(){
 }
 
 export async function POST(request:Request){
+   
+    
     const {type,role,level,techstack,amount,userid}=await request.json()
+        
     try{
         const {text:questions}=await generateText({
            model:google("gemini-2.0-flash-001"),
@@ -54,6 +57,7 @@ export async function POST(request:Request){
             status:200
         })
     }catch(error){
+        console.log("catch error")
         console.log(error)
         return Response.json({
             success:false,

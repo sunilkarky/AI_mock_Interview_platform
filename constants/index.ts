@@ -228,3 +228,230 @@ export const dummyInterviews: Interview[] = [
     createdAt: "2023-09-30T15:30:00Z",
   },
 ];
+
+export const generator={
+  "name": "Interview Prepararion",
+  "nodes": [
+    {
+      "name": "introduction",
+      "type": "conversation",
+      "isStart": true,
+      "metadata": {
+        "position": {
+          "x": -674.1746013727752,
+          "y": -418.4765662305387
+        }
+      },
+      "prompt": "Greet the user and help them create a new Interviewer for the interview.",
+      "model": {
+        "model": "gpt-4o",
+        "provider": "openai",
+        "maxTokens": 1000,
+        "temperature": 0.7
+      },
+      "voice": {
+        "voiceId": "Elliot",
+        "provider": "vapi"
+      },
+      "variableExtractionPlan": {
+        "output": [
+          {
+            "enum": [],
+            "type": "string",
+            "title": "role",
+            "description": "What role should would you like to train for? "
+          },
+          {
+            "enum": [],
+            "type": "string",
+            "title": "level",
+            "description": "The job experience level."
+          },
+          {
+            "enum": [],
+            "type": "number",
+            "title": "amount",
+            "description": "How many questions would you like to generate? "
+          },
+          {
+            "enum": [],
+            "type": "string",
+            "title": "techstack",
+            "description": "A list of technologies to cover during the job interview."
+          },
+          {
+            "enum": [],
+            "type": "string",
+            "title": "type",
+            "description": "What type of the interview should it be? "
+          }
+        ]
+      },
+      "messagePlan": {
+        "firstMessage": "Hey there! I am here for assisting you to create a Interview. Let's get started!. ."
+      }
+    },
+    {
+      "name": "conversation_1748663196893",
+      "type": "conversation",
+      "metadata": {
+        "position": {
+          "x": -1172.4402896994088,
+          "y": -153.5949010979965
+        }
+      },
+      "prompt": "Give summary of gathered information of stored extract variables in short to confirm.",
+      "model": {
+        "model": "gpt-4o",
+        "provider": "openai",
+        "maxTokens": 1000,
+        "temperature": 0.7
+      },
+      "messagePlan": {
+        "firstMessage": "The Interview will be generated shortly. I'll be right back."
+      }
+    },
+    {
+      "name": "API Request",
+      "type": "tool",
+      "metadata": {
+        "position": {
+          "x": -1475.1556290918907,
+          "y": 86.85248124583923
+        }
+      },
+      "tool": {
+        "url": `${process.env.NEXT_PUBLIC_BASE_URL}/api/vapi/generate`,
+        "body": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "role": {
+              "type": "string",
+              "value": "{{role}}",
+              "description": ""
+            },
+            "type": {
+              "type": "string",
+              "value": "{{type}}",
+              "description": ""
+            },
+            "level": {
+              "type": "string",
+              "value": "{{level}}",
+              "description": ""
+            },
+            "amount": {
+              "type": "number",
+              "value": "{{amount}}",
+              "description": ""
+            },
+            "userid": {
+              "type": "string",
+              "value": "{{ userid }}",
+              "description": ""
+            },
+            "techstack": {
+              "type": "string",
+              "value": "{{techstack}}",
+              "description": ""
+            }
+          }
+        },
+        "type": "apiRequest",
+        "method": "POST",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Content-Type": {
+              "type": "string",
+              "value": "application/json"
+            }
+          }
+        },
+        "function": {
+          "name": "untitled_tool",
+          "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          }
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "content": "Preparing your Interview. Don't hangup the call.",
+            "blocking": false
+          },
+          {
+            "type": "request-response-delayed",
+            "content": "Just there hold on.",
+            "timingMilliseconds": 1000
+          }
+        ]
+      }
+    },
+    {
+      "name": "hangup_1748717198957",
+      "type": "tool",
+      "metadata": {
+        "position": {
+          "x": -811.3903150744932,
+          "y": 319.74655316654326
+        }
+      },
+      "tool": {
+        "type": "endCall",
+        "function": {
+          "name": "untitled_tool",
+          "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          }
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "content": "Please hold on. Don't hang up .Call will automatically disconnect after creating interview .",
+            "blocking": false
+          },
+          {
+            "role": "assistant",
+            "type": "request-complete",
+            "content": "Your AI Interviewer is ready.Have fun.",
+            "endCallAfterSpokenEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "introduction",
+      "to": "conversation_1748663196893",
+      "condition": {
+        "type": "ai",
+        "prompt": "If user give all variables details"
+      }
+    },
+    {
+      "from": "conversation_1748663196893",
+      "to": "API Request",
+      "condition": {
+        "type": "ai",
+        "prompt": ""
+      }
+    },
+    {
+      "from": "API Request",
+      "to": "hangup_1748717198957",
+      "condition": {
+        "type": "ai",
+        "prompt": ""
+      }
+    }
+  ],
+  "globalPrompt": "You are a voice assistant helping with creating new AI interviewers. Your task is to collect data from the user. Remember that this is a voice conversation - do not use any special characters.\n"
+}
+// "url": `${process.env.NEXT_PUBLIC_BASE_URL}/api/vapi/generate`,
