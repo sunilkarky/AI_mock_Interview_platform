@@ -14,8 +14,8 @@ export async function GET(){
 }
 
 export async function POST(request:Request){
-   
-    
+    console.log("api hit")
+    console.log(request.body)
     const {type,role,level,techstack,amount,userid}=await request.json()
         
     try{
