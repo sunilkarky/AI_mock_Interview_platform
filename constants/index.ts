@@ -238,11 +238,11 @@ export const generator={
       "isStart": true,
       "metadata": {
         "position": {
-          "x": -674.1746013727752,
-          "y": -418.4765662305387
+          "x": -1260.7470370651768,
+          "y": -514.0685158752059
         }
       },
-      "prompt": "Greet the user and help them create a new Interviewer for the interview.",
+      "prompt": "Greet the user .",
       "model": {
         "model": "gpt-4o",
         "provider": "openai",
@@ -292,23 +292,37 @@ export const generator={
       }
     },
     {
-      "name": "conversation_1748663196893",
-      "type": "conversation",
+      "name": "hangup_1748717198957",
+      "type": "tool",
       "metadata": {
         "position": {
-          "x": -1172.4402896994088,
-          "y": -153.5949010979965
+          "x": -1238.3793451902102,
+          "y": -58.94976959148539
         }
       },
-      "prompt": "Give summary of gathered information of stored extract variables in short to confirm.",
-      "model": {
-        "model": "gpt-4o",
-        "provider": "openai",
-        "maxTokens": 1000,
-        "temperature": 0.7
-      },
-      "messagePlan": {
-        "firstMessage": "The Interview will be generated shortly. I'll be right back."
+      "tool": {
+        "type": "endCall",
+        "function": {
+          "name": "untitled_tool",
+          "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          }
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "content": "Call will automatically disconnect after creating interview .",
+            "blocking": true
+          },
+          {
+            "role": "assistant",
+            "type": "request-complete",
+            "content": "Your AI Interviewer is ready.Have fun.",
+            "endCallAfterSpokenEnabled": true
+          }
+        ]
       }
     },
     {
@@ -316,8 +330,8 @@ export const generator={
       "type": "tool",
       "metadata": {
         "position": {
-          "x": -1475.1556290918907,
-          "y": 86.85248124583923
+          "x": -1262.1322689491703,
+          "y": -292.3566240236506
         }
       },
       "tool": {
@@ -385,42 +399,14 @@ export const generator={
           },
           {
             "type": "request-response-delayed",
-            "content": "Just there hold on.",
+            "content": "Almost there hold on.",
             "timingMilliseconds": 1000
-          }
-        ]
-      }
-    },
-    {
-      "name": "hangup_1748717198957",
-      "type": "tool",
-      "metadata": {
-        "position": {
-          "x": -811.3903150744932,
-          "y": 319.74655316654326
-        }
-      },
-      "tool": {
-        "type": "endCall",
-        "function": {
-          "name": "untitled_tool",
-          "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-          }
-        },
-        "messages": [
-          {
-            "type": "request-start",
-            "content": "Please hold on. Don't hang up .Call will automatically disconnect after creating interview .",
-            "blocking": false
           },
           {
             "role": "assistant",
             "type": "request-complete",
-            "content": "Your AI Interviewer is ready.Have fun.",
-            "endCallAfterSpokenEnabled": true
+            "content": "Your interview has been generated.Thank you.",
+            "endCallAfterSpokenEnabled": false
           }
         ]
       }
@@ -429,14 +415,6 @@ export const generator={
   "edges": [
     {
       "from": "introduction",
-      "to": "conversation_1748663196893",
-      "condition": {
-        "type": "ai",
-        "prompt": "If user give all variables details"
-      }
-    },
-    {
-      "from": "conversation_1748663196893",
       "to": "API Request",
       "condition": {
         "type": "ai",
