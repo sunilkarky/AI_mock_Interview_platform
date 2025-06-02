@@ -321,7 +321,7 @@ export const generator={
         }
       },
       "tool": {
-        "url": `${process.env.NEXT_PUBLIC_BASE_URL}/api/vapi/generate`,
+        "url": "https://ai-mock-interview-platform-plum.vercel.app/api/vapi/generate",
         "body": {
           "type": "object",
           "required": [],
