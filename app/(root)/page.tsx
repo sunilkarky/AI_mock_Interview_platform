@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { dummyInterviews } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import InterviewCard from "../../components/InterviewCard";
+import { getCurrentUser } from "@/lib/actions/auth.action";
+
 import {
-  getCurrentUser,
   getInterviewByUserId,
   getLatestInterviews,
-} from "@/lib/actions/auth.action";
+} from "@/lib/actions/general.action";
 
 const Page = async () => {
   const user = await getCurrentUser();
@@ -18,7 +18,6 @@ const Page = async () => {
     await getInterviewByUserId(user?.id!),
     await getLatestInterviews({ userId: user?.id! }),
   ]);
-  console.log(getLatestInterviews);
   // const userInterviews = await getInterviewByUserId(user?.id!);
   // const latestInterviews = await getLatestInterviews({ userId: user?.id! });
   const hasPastInterviews = userInterviews?.length > 0;
@@ -35,7 +34,7 @@ const Page = async () => {
             practice sessions
           </p>
           <Button asChild className="btn-primary max-sm:w-full">
-            <Link href="/interview">Start an Interview</Link>
+            <Link href="/interview">Create a new Interview</Link>
           </Button>
         </div>
         <Image

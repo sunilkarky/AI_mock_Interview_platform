@@ -1,5 +1,6 @@
 "use client";
-import { generator } from "@/constants";
+import { generator, interviewer } from "@/constants";
+import { createFeedback } from "@/lib/actions/general.action";
 import { cn } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import Image from "next/image";
@@ -19,7 +20,13 @@ interface SavedMessage {
   content: string;
 }
 
-const Agent = ({ userName, userId, type }: AgentProps) => {
+const Agent = ({
+  userName,
+  userId,
+  type,
+  interviewId,
+  questions,
+}: AgentProps) => {
   const router = useRouter();
 
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -70,16 +77,70 @@ const Agent = ({ userName, userId, type }: AgentProps) => {
       vapi.off("error", onError);
     };
   }, []);
+
+  // const handleGenerateFeedback = async (message: SavedMessage[]) => {
+  //   console.log("Generate feedback here");
+  //   const { success, feedbackId: id } = await createFeedback({
+  //     interviewId: interviewId!,
+  //     userId: userId!,
+  //     transcript: messages,
+  //   });
+  //   if (success && id) {
+  //     router.push(`/interview/${interviewId}/feedback`);
+  //   } else {
+  //     console.log("Error saving your feedback try later");
+  //     router.push("/");
+  //   }
+  // };
+
+  // const handleGenerateFeedback = async (messages: SavedMessage[]) => {
+  //   const res = await fetch("/api/feedback", {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       interviewId: interviewId!,
+  //       userId: userId!,
+  //       transcript: messages,
+  //     }),
+  //     headers: { "Content-Type": "application/json" },
+  //   });
+  //   const { success, feedbackId: id } = await res.json();
+  //   if (success && id) {
+  //     router.push(`/interview/${interviewId}/feedback`);
+  //   } else {
+  //     router.push("/");
+  //   }
+  // };
+
+  const handleGenerateFeedback = async (messages: SavedMessage[]) => {
+    const res = await fetch("/api/feedback", {
+      method: "POST",
+      body: JSON.stringify({
+        interviewId: interviewId!,
+        userId: userId!,
+        transcript: messages,
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const { success, feedbackId: id } = await res.json();
+    if (success && id) {
+      router.push(`/interview/${interviewId}/feedback`);
+    } else {
+      router.push("/");
+    }
+  };
   useEffect(() => {
     //this is for app state changes in ui acc to dependencies
     if (callStatus === CallStatus.FINISHED) {
-      router.push("/");
+      if (type === "generate") {
+        router.push("/");
+      } else {
+        handleGenerateFeedback(messages);
+      }
     }
   }, [messages, callStatus, type, userId]);
 
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
-    console.log("object");
 
     if (type === "generate") {
       await vapi.start(
@@ -95,6 +156,20 @@ const Agent = ({ userName, userId, type }: AgentProps) => {
         undefined,
         generator
       );
+    } else {
+      let formattedQuestions = "";
+      if (questions) {
+        const formattedQuestions = questions
+          .map((question) => `-${question}`)
+          .join("\n");
+      }
+      await vapi.start(interviewer, {
+        variableValues: {
+          questions: formattedQuestions,
+        },
+        clientMessages: ["transcript"],
+        serverMessages: [],
+      });
     }
   };
 
@@ -176,26 +251,6 @@ const Agent = ({ userName, userId, type }: AgentProps) => {
 
 export default Agent;
 
-/* <div className="call-view">
-            <div className="card-interviewer">
-                <div className="avatar">
-                    <Image src="/ai-avatar.png" alt="vapi" width={65} height={54} className="object-cover" />
-                    {isSpeaking && <span className="animate-speak" />}
-                </div>
-                <h3>AI Interviewer</h3>
-            </div>
-
-            <div className="card-border">
-                <div className="card-content">
-                    <Image src="/user-avatar.png" alt="user avatar" width={540} height={540} className="rounded-full object-cover size-[120px]" />
-                    <h3>{userName}</h3>
-                </div>
-            </div>
-        </div> */
-
-//       const handleCall = async () => {
-//   setCallStatus(CallStatus.CONNECTING);
-
 //   if (type === "generate") {
 //     await vapi.start(
 //       undefined,
@@ -227,3 +282,36 @@ export default Agent;
 //     });
 //   }
 // };
+// const handleCall = async () => {
+//     setCallStatus(CallStatus.CONNECTING);
+
+//     if (type === "generate") {
+//       await vapi.start(
+//         undefined,
+//         {
+//           variableValues: {
+//             username: userName,
+//             userid: userId,
+//           },
+//           clientMessages: ["transcript"],
+//           serverMessages: [],
+//         },
+//         undefined,
+//         generator
+//       );
+//     } else {
+//       let formattedQuestions = "";
+//       if (questions) {
+//         const formattedQuestions = questions
+//           .map((question) => `-${question}`)
+//           .join("\n");
+//       }
+//       await vapi.start(interviewer, {
+//         variableValues: {
+//           questions: formattedQuestions,
+//         },
+//         clientMessages: ["transcript"],
+//         serverMessages: [],
+//       });
+//     }
+//   };
