@@ -34,7 +34,7 @@ const Page = async () => {
             practice sessions
           </p>
           <Button asChild className="btn-primary max-sm:w-full">
-            <Link href="/interview">Create a new Interview</Link>
+            <Link href="/interview">Create a new AI Interviewer</Link>
           </Button>
         </div>
         <Image

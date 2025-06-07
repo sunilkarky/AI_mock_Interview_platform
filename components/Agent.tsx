@@ -159,7 +159,7 @@ const Agent = ({
     } else {
       let formattedQuestions = "";
       if (questions) {
-        const formattedQuestions = questions
+        formattedQuestions = questions
           .map((question) => `-${question}`)
           .join("\n");
       }
